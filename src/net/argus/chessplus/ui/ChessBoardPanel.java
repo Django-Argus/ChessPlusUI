@@ -15,8 +15,10 @@ import net.argus.chessplus.core.board.ChessBoard;
 import net.argus.chessplus.core.pieces.ChessPiece;
 import net.argus.chessplus.core.team.Direction;
 import net.argus.chessplus.core.team.Team;
+import net.argus.chessplus.ui.piece.Piece;
 import net.argus.chessplus.ui.piece.PieceImage;
 import net.argus.util.ThreadManager;
+import net.argus.util.debug.Debug;
 
 public class ChessBoardPanel extends JPanel {
 
@@ -96,7 +98,7 @@ public class ChessBoardPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		//g.translate(10, 10);
+
 		int offX = 0, offY = 0;
 		for(int y = 0; y < board.getHeight(); y++) {
 			for(int x = 0; x < board.getWigth(); x++) {
@@ -116,13 +118,18 @@ public class ChessBoardPanel extends JPanel {
 	}
 	
 	protected void drawPiece(Graphics g) {
-		g.translate(0, 3);
+		//g.translate(0, 3);
 		for(int y = 0; y < board.getHeight(); y++) {
 			for(int x = 0; x < board.getWigth(); x++) {
 				
 				ChessPiece piece = board.getPiece(new Location((String) ((char) (getX(x) + 97) + Integer.toString(getY(y)))));
-				if(piece != null)
-					g.drawImage(PieceImage.getImage(true, piece.getTeam(), piece.getName(), size), 0, 0, null);
+				if(piece != null) {
+					Piece p = Piece.getPiece(piece.getName());
+					if(p != null)
+						p.draw(g, PieceImage.getImage(true, piece.getTeam(), piece.getName(), size));
+					else
+						Debug.log("Piece: " + piece.getName() + " is not registered");
+				}
 				g.translate(size, 0);
 			}
 			g.translate(-size*board.getWigth(), size);
